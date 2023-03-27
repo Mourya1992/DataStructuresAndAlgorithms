@@ -1,6 +1,9 @@
 package org.example.Sorting;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SortingAlgorithms {
 
     public void swapLogic(int[] arr,int i,int j){
@@ -42,11 +45,13 @@ public class SortingAlgorithms {
 
     public void divide(int[] arr, int si,int ei){
         int mid = si+(ei-si)/2;
-        if(si<ei){
+        if(si>=ei) {
+            return;
+        }
             divide(arr,si,mid);
             divide(arr,mid+1,ei);
             conqure(arr,si,ei,mid);
-        }
+
 
     }
 
@@ -64,7 +69,7 @@ public class SortingAlgorithms {
             rtArr[j]=arr[mid+1+j];
         }
         while(index1<ltArr.length && index2<rtArr.length){
-            if(ltArr[index1]>rtArr[index2]){
+            if(ltArr[index1]<rtArr[index2]){
                 arr[x]=ltArr[index1];
                 index1++;
                 x++;
@@ -87,10 +92,21 @@ public class SortingAlgorithms {
     }
     public static void main(String[] args) {
         System.out.println("say hi");
-        SortingAlgorithms sortingAlgorithms = new SortingAlgorithms();
-        int[] arrayinput = {7,3,16,9,12,1,33,10,88,123,56};
-       // sortingAlgorithms.quickSort(arrayinput,0,arrayinput.length-1);
-        sortingAlgorithms.divide(arrayinput,0,arrayinput.length-1);
-        sortingAlgorithms.printArray(arrayinput);
+//        SortingAlgorithms sortingAlgorithms = new SortingAlgorithms();
+//        int[] arrayinput = {7,3,16,9,12,1,33,10,88,123,56};
+//       // sortingAlgorithms.quickSort(arrayinput,0,arrayinput.length-1);
+//        sortingAlgorithms.divide(arrayinput,0,arrayinput.length-1);
+//        sortingAlgorithms.printArray(arrayinput);
+
+        List<Integer> nums = new ArrayList<>();
+        nums.add(4);
+        nums.add(20);
+        nums.add(45);
+        nums.forEach(num-> {System.out.print(num+" ");
+           });
+        System.out.println("\n");
+        nums.add(1,24);
+        nums.forEach(num-> System.out.print(num+" "));
+
     }
 }
