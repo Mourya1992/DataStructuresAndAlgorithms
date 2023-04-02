@@ -72,24 +72,59 @@ public class LinkedListPrototype {
         secondLastNode.next = null;
     }
 
+    public void reverseLinkedList() {
 
-    public static void main(String[] args) {
-        LinkedListPrototype linkedListPrototype = new LinkedListPrototype();
-        linkedListPrototype.addFirst("This");
-        linkedListPrototype.addFirst("Hi");
-        linkedListPrototype.addLast("is");
-        linkedListPrototype.addLast("Mourya");
-        linkedListPrototype.printList();
-        linkedListPrototype.deleteLastNode();
-        linkedListPrototype.deleteLastNode();
-        linkedListPrototype.deleteLastNode();
-        linkedListPrototype.deleteLastNode();
+        if (head == null || head.next == null) {
+            return;
+        }
+        Node previous = head;
+        Node currentNode = head.next;
+        while (currentNode != null) {
+            Node nextNode = currentNode.next;
+            currentNode.next = previous;
+            previous = currentNode;
+            currentNode = nextNode;
+        }
+        head.next = null;
+        head = previous;
+    }
 
+    public int find(String value){
+        int count = -1;
+        if(head==null){
+            return  -1;
+        }
+        if(head.next==null){
+            if(head.data==value){
+                count++;
+            }
+            return count;
+        }
+        Node currentNode = head;
+        while(currentNode!=null){
+            count++;
+            if(currentNode.data==value){
+                return count;
+            }
+            currentNode=currentNode.next;
 
-        linkedListPrototype.printList();
-
-
+        }
+        return  -1;
     }
 
 
+    public static void main(String[] args) {
+        LinkedListPrototype linkedListPrototype = new LinkedListPrototype();
+        linkedListPrototype.addLast("one");
+        linkedListPrototype.addLast("two");
+        linkedListPrototype.addLast("three");
+        linkedListPrototype.addLast("four");
+        linkedListPrototype.addLast("five");
+        linkedListPrototype.printList();
+        linkedListPrototype.reverseLinkedList();
+        linkedListPrototype.printList();
+        int index = linkedListPrototype.find("twelve");
+        System.out.println("two is presengt at :"+index);
+
+    }
 }
