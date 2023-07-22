@@ -4,6 +4,7 @@ import com.sun.source.tree.Tree;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Stack;
 
 public class BinaryTrees {
 
@@ -74,7 +75,7 @@ public class BinaryTrees {
                     queue.add(null);
                 }
             } else {
-                System.out.print(currentNode.getData());
+                System.out.print(currentNode.getData()+" ");
                 if (currentNode.getLeftNode() != null) {
                     queue.add(currentNode.getLeftNode());
                 }
@@ -174,9 +175,12 @@ public class BinaryTrees {
         TreeNode subrootNode = bt.buildTree(subnodes);
         System.out.println("root node :" + rootNode.getData());
         System.out.println("sub treee+=======");
-        bt.levelOrderTraversal(subrootNode);
-        System.out.println("Main tree======");
+        bt.levelOrderTraversal(rootNode);
+        System.out.println("Main tree====== in order traversal");
         bt.inOrderTraversal(rootNode);
+        System.out.println(("Post order traversal:====="));
+        bt.postOrderTraversal(rootNode);
+
        /* bt.preOrderTraversal(rootNode);
         System.out.println();
         bt.postOrderTraversal(rootNode);
@@ -194,6 +198,6 @@ public class BinaryTrees {
         System.out.println(isSubtree);*/
 
 
-        System.out.println(bt.lookForaNode(subrootNode,10));
+       // System.out.println(bt.lookForaNode(subrootNode,10));
     }
 }
