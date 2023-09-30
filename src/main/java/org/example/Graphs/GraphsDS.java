@@ -112,7 +112,10 @@ public class GraphsDS {
         boolean[] visited = new boolean[graphDs.size()];
         int[] distanceMatrix = new int[graphDs.size()];
         System.out.println("distance matrix size:::"+distanceMatrix.length);
-        dijestrasAlgorithmTofindtheShortestPath(graphDs,visited,distanceMatrix,5);
+        dijestrasAlgorithmTofindtheShortestPath(graphDs,visited,distanceMatrix,0);
+        List<ArrayList<Edge>> graphDs2 =createGraphForBellmanForAlgo();
+        bellmanFordAlgorithm(graphDs2,0,graphDs2.size());
+
 
         //bfsTest(graphDs);
 
@@ -182,7 +185,62 @@ public class GraphsDS {
 
 
 
+        public static void bellmanFordAlgorithm(List<ArrayList<Edge>> graphDs,int src,int vertexCount){
+        int[] distanceMatritrix = new int[vertexCount];
+        for(int i=0;i<vertexCount;i++){
+            if(src!=i){
+                distanceMatritrix[i]=Integer.MAX_VALUE;
+            }
+        }
 
+        for(int k=0 ;k<vertexCount;k++){
+
+            for(int i=src;i<vertexCount;i++){
+               graphDs.get(i).forEach(vertex->{
+                   Edge e = vertex;
+                   int u = e.getSource();
+                   int v = e.getDestination();
+                   if((distanceMatritrix[u]+e.getWeight()<distanceMatritrix[v]) && distanceMatritrix[u]!=Integer.MAX_VALUE){
+                       distanceMatritrix[v]=distanceMatritrix[u]+e.getWeight();
+                       System.out.println("C");
+                   }
+               });
+            }
+
+        }
+
+            System.out.println("");
+        for(int z=0;z<distanceMatritrix.length;z++){
+            System.out.print(distanceMatritrix[z]+" ");
+        }
+
+        }
+
+
+
+        public static List<ArrayList<Edge>> createGraphForBellmanForAlgo(){
+        List<ArrayList<Edge>> graphDs= new ArrayList<>();
+
+            ArrayList<Edge> v0 = new ArrayList<>();
+            ArrayList<Edge> v1 = new ArrayList<>();
+            ArrayList<Edge> v2 = new ArrayList<>();
+            ArrayList<Edge> v3 = new ArrayList<>();
+            ArrayList<Edge> v4 = new ArrayList<>();
+            v0.add(new Edge(0, 1, 2));
+            v0.add(new Edge(0, 2, 4));
+            v1.add(new Edge(1,2,-4));
+            v2.add(new Edge(2,3,2));
+            v3.add(new Edge(3,4,4));
+            v4.add(new Edge(4,1,-1));
+            graphDs.add(v0);
+            graphDs.add(v1);
+            graphDs.add(v2);
+            graphDs.add(v3);
+            graphDs.add(v4);
+
+
+        return graphDs;
+        }
 
 
     public static void dfsTest(List<ArrayList<Edge>> sampleGraph, Boolean[] visitedGraph, int currentVertex) {
