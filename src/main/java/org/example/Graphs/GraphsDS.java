@@ -5,26 +5,47 @@ import java.util.*;
 public class GraphsDS {
 
 
-    public static List<ArrayList<Edge>> createWeightedGraph(){
+    public static List<ArrayList<Edge>> createWeightedGraph() {
         int vertexCount = 6;
         List<ArrayList<Edge>> graph = new ArrayList<>();
 
         for (int i = 0; i < vertexCount; i++) {
             graph.add(new ArrayList<>());
         }
-        graph.get(0).add(new Edge(0, 1,2));
-        graph.get(0).add(new Edge(0, 2,4));
-        graph.get(1).add(new Edge(1, 2,1));
-        graph.get(1).add(new Edge(1, 3,7));
-        graph.get(2).add(new Edge(2, 4,3));
-        graph.get(3).add(new Edge(3, 5,1));
-        graph.get(4).add(new Edge(4, 3,2));
-        graph.get(4).add(new Edge(4, 5,5));
+        graph.get(0).add(new Edge(0, 1, 2));
+        graph.get(0).add(new Edge(0, 2, 4));
+        graph.get(1).add(new Edge(1, 2, 1));
+        graph.get(1).add(new Edge(1, 3, 7));
+        graph.get(2).add(new Edge(2, 4, 3));
+        graph.get(3).add(new Edge(3, 5, 1));
+        graph.get(4).add(new Edge(4, 3, 2));
+        graph.get(4).add(new Edge(4, 5, 5));
 
         return graph;
 
     }
 
+
+    public static List<ArrayList<Edge>> createGraphForMinSpanningTree() {
+        int vertexCount = 4;
+        List<ArrayList<Edge>> graph = new ArrayList<>();
+
+        for (int i = 0; i < vertexCount; i++) {
+            graph.add(new ArrayList<>());
+        }
+        graph.get(0).add(new Edge(0, 1, 10));
+        graph.get(0).add(new Edge(0, 2, 15));
+        graph.get(1).add(new Edge(0, 3, 70));
+        graph.get(1).add(new Edge(1, 0, 10));
+        graph.get(1).add(new Edge(1, 3, 40));
+        graph.get(2).add(new Edge(2, 0, 15));
+        graph.get(2).add(new Edge(2, 3, 50));
+        graph.get(2).add(new Edge(3, 0, 30));
+        graph.get(2).add(new Edge(3, 1, 40));
+        graph.get(2).add(new Edge(3, 2, 50));
+
+        return graph;
+    }
 
 
     public static List<ArrayList<Edge>> createGraph() {
@@ -111,10 +132,11 @@ public class GraphsDS {
         List<ArrayList<Edge>> graphDs = createWeightedGraph();
         boolean[] visited = new boolean[graphDs.size()];
         int[] distanceMatrix = new int[graphDs.size()];
-        System.out.println("distance matrix size:::"+distanceMatrix.length);
-        dijestrasAlgorithmTofindtheShortestPath(graphDs,visited,distanceMatrix,0);
-        List<ArrayList<Edge>> graphDs2 =createGraphForBellmanForAlgo();
-        bellmanFordAlgorithm(graphDs2,0,graphDs2.size());
+        System.out.println("distance matrix size:::" + distanceMatrix.length);
+        dijestrasAlgorithmTofindtheShortestPath(graphDs, visited, distanceMatrix, 0);
+        List<ArrayList<Edge>> graphDs2 = createGraphForBellmanForAlgo();
+        bellmanFordAlgorithm(graphDs2, 0, graphDs2.size());
+        primsAlgorithmForMinimumSpanningTree(createGraphForMinSpanningTree(),4);
 
 
         //bfsTest(graphDs);
@@ -140,8 +162,16 @@ public class GraphsDS {
         int vertex;
         int distance;
 
+        int sourceVertex;
+
         public NodeData(int vertex, int
                 distance) {
+            this.vertex = vertex;
+            this.distance = distance;
+        }
+        public NodeData(int sourceVertex,int vertex, int
+                distance) {
+            this.sourceVertex = sourceVertex;
             this.vertex = vertex;
             this.distance = distance;
         }
@@ -159,88 +189,113 @@ public class GraphsDS {
                 distance[i] = Integer.MAX_VALUE;
             }
         }
-            pq.add(new NodeData(src, 0));
+        pq.add(new NodeData(src, 0));
 
-            while (!pq.isEmpty()) {
-                NodeData node = pq.remove();
-                if (!visited[node.vertex]) {
-                    visited[node.vertex]=true;
-                    graphDs.get(node.vertex).forEach(edge -> {
-                        int u = node.vertex;
-                        int v = edge.getDestination();
-                        int weight = edge.getWeight();
+        while (!pq.isEmpty()) {
+            NodeData node = pq.remove();
+            if (!visited[node.vertex]) {
+                visited[node.vertex] = true;
+                graphDs.get(node.vertex).forEach(edge -> {
+                    int u = node.vertex;
+                    int v = edge.getDestination();
+                    int weight = edge.getWeight();
 
-                        if (distance[u] + weight < distance[v]) {
-                            distance[v] = distance[u] + weight;
-                            pq.add(new NodeData(edge.getDestination(),distance[v]));
-                        }
+                    if (distance[u] + weight < distance[v]) {
+                        distance[v] = distance[u] + weight;
+                        pq.add(new NodeData(edge.getDestination(), distance[v]));
+                    }
 
-                    });
-                }
-            }
-        for(int i=0;i<distance.length;i++) {
-            System.out.print(distance[i]+" ");
-        }
-        }
-
-
-
-        public static void bellmanFordAlgorithm(List<ArrayList<Edge>> graphDs,int src,int vertexCount){
-        int[] distanceMatritrix = new int[vertexCount];
-        for(int i=0;i<vertexCount;i++){
-            if(src!=i){
-                distanceMatritrix[i]=Integer.MAX_VALUE;
+                });
             }
         }
+        for (int i = 0; i < distance.length; i++) {
+            System.out.print(distance[i] + " ");
+        }
+    }
 
-        for(int k=0 ;k<vertexCount;k++){
+    public static void primsAlgorithmForMinimumSpanningTree(List<ArrayList<Edge>> graph,int vertexCount){
+        PriorityQueue<NodeData> pq = new PriorityQueue<>();
+        boolean[] visited = new boolean[vertexCount];
+        pq.add(new NodeData(0,0));
+        int minWeight =0;
+        ArrayList<Edge> minSpannigTreeEdges = new ArrayList<>();
+        while (!pq.isEmpty()){
+           NodeData currentNode = pq.remove();
 
-            for(int i=src;i<vertexCount;i++){
-               graphDs.get(i).forEach(vertex->{
-                   Edge e = vertex;
-                   int u = e.getSource();
-                   int v = e.getDestination();
-                   if((distanceMatritrix[u]+e.getWeight()<distanceMatritrix[v]) && distanceMatritrix[u]!=Integer.MAX_VALUE){
-                       distanceMatritrix[v]=distanceMatritrix[u]+e.getWeight();
-                       System.out.println("C");
+           if(!visited[currentNode.vertex]){
+               minWeight+= currentNode.distance;
+               visited[currentNode.vertex]=true;
+               minSpannigTreeEdges.add(new Edge(currentNode.sourceVertex,currentNode.distance,currentNode.vertex));
+               graph.get(currentNode.vertex).forEach(edge -> {
+                   if(!visited[edge.getDestination()]){
+                       pq.add(new NodeData(edge.getSource(), edge.getDestination(), edge.getWeight()));
                    }
                });
+           }
+        }
+        System.out.println("the minimum distance is :"+minWeight);
+        minSpannigTreeEdges.forEach(edge -> {
+            System.out.println(edge.getSource()+"---"+edge.getWeight()+"--->"+edge.getDestination());
+        });
+    }
+
+
+
+    public static void bellmanFordAlgorithm(List<ArrayList<Edge>> graphDs, int src, int vertexCount) {
+        int[] distanceMatritrix = new int[vertexCount];
+        for (int i = 0; i < vertexCount; i++) {
+            if (src != i) {
+                distanceMatritrix[i] = Integer.MAX_VALUE;
+            }
+        }
+
+        for (int k = 0; k < vertexCount-1; k++) {
+
+            for (int i = src; i < vertexCount; i++) {
+                graphDs.get(i).forEach(vertex -> {
+                    Edge e = vertex;
+                    int u = e.getSource();
+                    int v = e.getDestination();
+                    if ((distanceMatritrix[u] + e.getWeight() < distanceMatritrix[v]) && distanceMatritrix[u] != Integer.MAX_VALUE) {
+                        distanceMatritrix[v] = distanceMatritrix[u] + e.getWeight();
+                        System.out.println("C");
+                    }
+                });
             }
 
         }
 
-            System.out.println("");
-        for(int z=0;z<distanceMatritrix.length;z++){
-            System.out.print(distanceMatritrix[z]+" ");
+        System.out.println("");
+        for (int z = 0; z < distanceMatritrix.length; z++) {
+            System.out.print(distanceMatritrix[z] + " ");
         }
 
-        }
+    }
 
 
+    public static List<ArrayList<Edge>> createGraphForBellmanForAlgo() {
+        List<ArrayList<Edge>> graphDs = new ArrayList<>();
 
-        public static List<ArrayList<Edge>> createGraphForBellmanForAlgo(){
-        List<ArrayList<Edge>> graphDs= new ArrayList<>();
-
-            ArrayList<Edge> v0 = new ArrayList<>();
-            ArrayList<Edge> v1 = new ArrayList<>();
-            ArrayList<Edge> v2 = new ArrayList<>();
-            ArrayList<Edge> v3 = new ArrayList<>();
-            ArrayList<Edge> v4 = new ArrayList<>();
-            v0.add(new Edge(0, 1, 2));
-            v0.add(new Edge(0, 2, 4));
-            v1.add(new Edge(1,2,-4));
-            v2.add(new Edge(2,3,2));
-            v3.add(new Edge(3,4,4));
-            v4.add(new Edge(4,1,-1));
-            graphDs.add(v0);
-            graphDs.add(v1);
-            graphDs.add(v2);
-            graphDs.add(v3);
-            graphDs.add(v4);
+        ArrayList<Edge> v0 = new ArrayList<>();
+        ArrayList<Edge> v1 = new ArrayList<>();
+        ArrayList<Edge> v2 = new ArrayList<>();
+        ArrayList<Edge> v3 = new ArrayList<>();
+        ArrayList<Edge> v4 = new ArrayList<>();
+        v0.add(new Edge(0, 1, 2));
+        v0.add(new Edge(0, 2, 4));
+        v1.add(new Edge(1, 2, -4));
+        v2.add(new Edge(2, 3, 2));
+        v3.add(new Edge(3, 4, 4));
+        v4.add(new Edge(4, 1, -1));
+        graphDs.add(v0);
+        graphDs.add(v1);
+        graphDs.add(v2);
+        graphDs.add(v3);
+        graphDs.add(v4);
 
 
         return graphDs;
-        }
+    }
 
 
     public static void dfsTest(List<ArrayList<Edge>> sampleGraph, Boolean[] visitedGraph, int currentVertex) {
@@ -277,6 +332,19 @@ public class GraphsDS {
 
 
     }
+
+    public void topologicalSort(List<ArrayList<Edge>> graphDs,boolean [] visitedArray,Stack<Integer> topologicalSequence ,int currentNode){
+
+        if(!visitedArray[currentNode]){
+            visitedArray[currentNode]=true;
+           graphDs.get(currentNode).forEach(edge -> {
+               topologicalSort(graphDs,visitedArray,topologicalSequence,edge.getDestination()) ;
+               topologicalSequence.push(currentNode);
+           });
+
+        }
+    }
+
 
 
     public void depthFirstSearch(List<ArrayList<Edge>> graphDS, boolean[] visited, int currentVertex) {
